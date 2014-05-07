@@ -1,0 +1,10 @@
+fa49cb65efa4382a415da33f6a3c9cda *DESCRIPTION
+cc4289351cefb461e47204d982bbc493 *NAMESPACE
+a505bec7ae3b3e369edcb8ee1520a976 *R/BayesGESM-internal.R
+ea8cf83190f3faa8e5d963329cfcc092 *R/BayesGESM.R
+025a909d31b14aab6f90da63d8748441 *R/mcmc.R
+b8b049989d1c58240e743f387d8608da *R/summary.BayesGESM.R
+3441b84f68b88a605db6cf004a70e6e5 *man/BayesGESM-package.Rd
+0cf3bf698bdd12d482d195f9a26943b3 *man/BayesGESM.Rd
+cddf4fc09293fcc096588b1f6cb7e384 *man/mcmc.Rd
+35212d6e8cdff31698bb3f6f2431399a *man/summary.BayesGESM.Rd

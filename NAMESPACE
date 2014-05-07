@@ -1,0 +1,6 @@
+exportPattern("^[[:alpha:]]+")
+#export(BayGESM, mcmc, summary.BayGESM)
+
+import(splines, truncdist, GIGrvg, normalp, gsl)
+
+
