@@ -159,27 +159,27 @@ uii
  pdf <- function(z){dt(z,eta)}
  cdf <- function(z){pt(z,eta)}
  }
+ 
  if(family=="Slash"){
  if(eta[1]<=0) stop("the extra parameter must be positive!!",call.=FALSE)
-   u <- function(s){
+     u <- function(s){
      bb <- s/2
  aa <- eta/2  + 1
- uii <- matrix(0,n,1)
-for(zz in 1:n){
-uii[zz] <- rtrunc(1, spec="gamma", a=0, b=1, shape=aa, scale=1/bb[zz]) 
-}
-uii
-    }
- H <- function(a,x){gamma(a)*gamma_inc_P(a,x)/(x^a)}          
- z <- function(x){H(eta+1/2,x^2/2)}
- pdf <- function(z){z(z)/(2*integrate(z,0,Inf)$value)}
- cdf <- function(z){temp <- matrix(0,length(z),1)
- for(i in 1:length(z)){
-temp[i] <- integrate(z,-Inf,z[i])$value
-}
-temp/(2*integrate(z,0,Inf)$value)
-}
+  uii <- matrix(0,n,1)
+     for(zz in 1:n){
+  uii[zz] <- rtrunc(1, spec="gamma", a=0, b=1, shape=aa, scale=1/bb[zz]) 
  }
+ uii
+    }
+    pdf <- function(z){eta*(z^2/2)^(-(eta+1/2))*gamma(eta+1/2)*pgamma(1,shape=(eta+1/2), scale=(2/z^2))/(2*pi)^(1/2)}
+    cdf <- function(z){temp <- matrix(0,length(z),1)          
+ for(i in 1:length(z)){    
+temp[i] <- integrate(pdf,-Inf,z[i])$value    
+}    
+temp    
+}   
+ }
+
  if(family=="Laplace"){
  eta <- 0
     u <- function(s){

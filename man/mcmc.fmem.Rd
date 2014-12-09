@@ -1,13 +1,12 @@
-\name{mcmc}
-\alias{mcmc}
+\name{mcmc.fmem}
+\alias{mcmc.fmem}
 \title{MCMC algorithm}
 \description{
 This function implements the MCMC algorithm derived in order to draw samples of
-the posterior distribution of the interest parameters in GESM models, which combines Gibbs sampler and
-Metropolis-Hastings algorithm.
+the posterior distribution of the interest parameters in flexible measurement error models.
 }
 \usage{
-mcmc(params)
+mcmc.fmem(params)
 }
 \arguments{
 \item{params}{An object type list, which provides the setup (i.e., values of hyperparameters, initial values, model matrices, basis functions for

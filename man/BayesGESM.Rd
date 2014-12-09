@@ -42,57 +42,59 @@ those obtained under the classical approach.
 \item{LMPL}{Log-marginal pseudo-likelihood for model selection.}
 }
 
-\references{Rondon, L.M. and Bolfarine, H. (2014) Bayesian Analysis of Generalized Elliptical Semiparametric Models. Computational Statistics and Data Analysis, (submitted).
+\references{Rondon, L.M. and Bolfarine, H. (2014) Bayesian Analysis of Generalized Elliptical Semiparametric Models. (submitted).
+
 			Dunn, P.K. e Smyth, G.K. (1996). Randomized quantile residuals. Journal of Computational and Graphical Statistics. 5, 236-244. }
 
 \author{Luz Marina Rondon <lumarp@gmail.com> and Heleno Bolfarine}
 
 
 \examples{
+## Not run
 ##########   European Rabbit   ##########
-library(ssym)
-data(Erabbits)
-Erabbits2 <- Erabbits[order(Erabbits$age,Erabbits$wlens),]
-attach(Erabbits2)
+#library(ssym)
+#data(Erabbits)
+#Erabbits2 <- Erabbits[order(Erabbits$age,Erabbits$wlens),]
+#attach(Erabbits2)
 
 
-fit <- BayesGESM(wlens, np.mu=age, np.dis=age, family= "Hyperbolic", eta=0.8,
-				 burn.in=10, post.sam.s=10, thin=1)			 
-summary(fit)
+#fit <- BayesGESM(wlens, np.mu=age, np.dis=age, family= "Hyperbolic", eta=0.8,
+#				 burn.in=10, post.sam.s=10, thin=1)			 
+#summary(fit)
 
 ##########   Plot of posterior mean of location and dispersion parameters 
-par(mfrow=c(1,2))
-np.mu <- fit$B\%*\%(apply(fit$chains, 2, mean)[(fit$p+1):(fit$p+fit$k1)])
-plot(age, wlens, xlim=range(age), ylim=range(wlens), type="p", cex=0.3, lwd=3, ylab="",
-	 xlab="", main="Location")
-par(new=TRUE)
-plot(age, np.mu, xlim=range(age), ylim=range(wlens), type="l", col="red",
-	 ylab="dry weight of eye lens", xlab="Age")
+#par(mfrow=c(1,2))
+#np.mu <- fit$B\%*\%(apply(fit$chains, 2, mean)[(fit$p+1):(fit$p+fit$k1)])
+#plot(age, wlens, xlim=range(age), ylim=range(wlens), type="p", cex=0.3, lwd=3, ylab="",
+#	 xlab="", main="Location")
+#par(new=TRUE)
+#plot(age, np.mu, xlim=range(age), ylim=range(wlens), type="l", col="red",
+#	 ylab="dry weight of eye lens", xlab="Age")
 
-xi <- besselK(fit$eta, 2)/(fit$eta*besselK(fit$eta,1))
-np.dis <- fit$D\%*\%(apply(fit$chains, 2, mean)[(fit$p+fit$k1+fit$q+1):(fit$p+fit$k1+fit$q+fit$k2)])
-aa <- (wlens - np.mu)^2/xi
-plot(age, aa, xlim=range(age), ylim=range(aa), cex=0.3, type="p", xlab="", ylab="", lwd=3,
-	 main="Dispersion")
-par(new=TRUE)
-plot(age, exp(np.dis), xlim=range(age), ylim=range(aa), type="l", col="red", ylab="",
-	 xlab="Age")
+#xi <- besselK(fit$eta, 2)/(fit$eta*besselK(fit$eta,1))
+#np.dis <- fit$D\%*\%(apply(fit$chains, 2, mean)[(fit$p+fit$k1+fit$q+1):(fit$p+fit$k1+fit$q+fit$k2)])
+#aa <- (wlens - np.mu)^2/xi
+#plot(age, aa, xlim=range(age), ylim=range(aa), cex=0.3, type="p", xlab="", ylab="", lwd=3,
+#	 main="Dispersion")
+#par(new=TRUE)
+#plot(age, exp(np.dis), xlim=range(age), ylim=range(aa), type="l", col="red", ylab="",
+#	 xlab="Age")
 
 ##########   Residual plot
-par(mfrow=c(1,2))
-plot(fit$res, ylim=c(-2,2), xlab="Index", ylab="", main="Residuals", cex=0.3,
-	 type="p", lwd=3)
-abline(h=0,lty=3)
-qqnorm(fit$res, xlim=c(-2,2), ylim=c(-2,2), xlab="Quantile", ylab="Residuals",
-	   cex=0.3, type="p", lwd=3)
-abline(0,1,lty=3)
+#par(mfrow=c(1,2))
+#plot(fit$res, ylim=c(-2,2), xlab="Index", ylab="", main="Residuals", cex=0.3,
+#	 type="p", lwd=3)
+#abline(h=0,lty=3)
+#qqnorm(fit$res, xlim=c(-2,2), ylim=c(-2,2), xlab="Quantile", ylab="Residuals",
+#	   cex=0.3, type="p", lwd=3)
+#abline(0,1,lty=3)
 
 ##########   Influence measures plot
-par(mfrow=c(1,2))
-plot(fit$KL, xlab="Index", ylab="", main="K-L divergence", cex=0.3, type="p", lwd=3)
-abline(h=3*mean(fit$KL))
-plot(fit$X_2, xlab="Index", ylab="", main="X2 divergence", cex=0.3, type="p", lwd=3)
-abline(h=3*mean(fit$X_2))
-
+#par(mfrow=c(1,2))
+#plot(fit$KL, xlab="Index", ylab="", main="K-L divergence", cex=0.3, type="p", lwd=3)
+#abline(h=3*mean(fit$KL))
+#plot(fit$X_2, xlab="Index", ylab="", main="X2 divergence", cex=0.3, type="p", lwd=3)
+#abline(h=3*mean(fit$X_2))
+## End(Not run)
 }
 

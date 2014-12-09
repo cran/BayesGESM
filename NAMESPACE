@@ -1,6 +1,6 @@
 exportPattern("^[[:alpha:]]+")
-#export(BayGESM, mcmc, summary.BayGESM)
+#export(BayGESM, mcmc, summary.BayGESM, fmem, mcmc.fmem, summary.fmem)
 
-import(splines, truncdist, GIGrvg, normalp, gsl)
+import(splines, truncdist, GIGrvg, normalp, Formula)
 
 
