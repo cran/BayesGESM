@@ -59,7 +59,7 @@ e <- cbind(a,a2,b,c,d)
 colnames(e) <- c("Mean ","Median","SD  ","      C.I.","95%    ")
 rownames(e) <- "Sigma2_y  "
 printCoefmat(e)
-cat("\n  Ratio of the error variances: " , 1/(object$omeg))
+cat("\n  Ratio of the error variances: " , (object$omeg))
 
 
 cat("\n\n ==========   Model Selection Criteria   ==========")

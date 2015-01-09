@@ -1,4 +1,4 @@
-mcmc <-
+mcmc.gesm <-
 function(params){
 
 rmvnorm.l <- function(mean, sigma){

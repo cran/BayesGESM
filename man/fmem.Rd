@@ -22,6 +22,11 @@ fmem(formula, data, omeg, family, eta, burn.in, post.sam.s, thin)
   \item{thin}{(optional) the thinning interval used in the simulation to obtain the required size for the posterior sample.}
 }
 \details{
+The argument \emph{formula} comprises of three parts, namely: \emph{(i)} observed response variable;
+\emph{(ii)} covariates with measurement error; and \emph{(iii)} covariates without measurement error including the nonparametric
+component, which can be specified by using the function \code{bsp()}.
+The first two parts are separated by the symbol "~" and the second and third parts are separated by the symbol "|".
+
 This function allows to fit the measurement error model which admits vectors of explanatory
 variables with and without measurement error as well as the presence of a nonlinear effect
 approximated by using B-splines. The model investigated is the structural
@@ -36,12 +41,16 @@ version, as the error-prone variables follow scale mixtures of normal distributi
 \item{LMPL}{Log-marginal pseudo-likelihood for model selection.}
 }
 
-\references{Rondon, L.M. and Bolfarine, H. (2014). Bayesian analysis of flexible measurement error models. SORT. (submitted)}
+\references{Rondon, L.M. and Bolfarine, H. (2015). Bayesian analysis of flexible measurement error models. (submitted)}
 \author{Luz Marina Rondon <lumarp@gmail.com> and Heleno Bolfarine}
+
+\seealso{
+\code{\link{bsp}}
+}
+
 
 \examples{
 #library(SemiPar)
-#library(Formula)
 #### Ragweed Pollen ####
 #data(ragweed)
 #attach(ragweed)
@@ -57,5 +66,10 @@ version, as the error-prone variables follow scale mixtures of normal distributi
 #			   data=ragweedn,family="Normal", burn.in=500, post.sam.s=2000,
 #			   thin=10, omeg=1)
 #summary(model)
+#
+##########   Plot nonparametric component
+#bsp.graph(model, which=1, xlab="Day", ylab="f(Day)")
+#
+
 }
 

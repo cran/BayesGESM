@@ -1,4 +1,4 @@
-summary.BayesGESM <-
+summary.gesm <-
 function(object, ...){
 chains <- object$chains     
 p <- object$p

@@ -1,6 +1,6 @@
 \name{mcmc.fmem}
 \alias{mcmc.fmem}
-\title{MCMC algorithm}
+\title{MCMC algorithm for Flexible Measurement Error Models}
 \description{
 This function implements the MCMC algorithm derived in order to draw samples of
 the posterior distribution of the interest parameters in flexible measurement error models.

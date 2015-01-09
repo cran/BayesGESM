@@ -36,8 +36,8 @@ if (burn.in != floor(burn.in) | burn.in < 1){ stop("Invalid burn-in value", call
  m <- match(c("formula"), names(mf), 0)
  mf <- mf[c(1, m)]
 
-     if (missingArg(data)) 
-        data <- environment(formula)
+ if (missingArg(data)) 
+ data <- environment(formula)
 
  formula <- Formula(formula)
  if (length(formula)[2L] < 2L)
@@ -46,11 +46,14 @@ if (burn.in != floor(burn.in) | burn.in < 1){ stop("Invalid burn-in value", call
 nl <- formula(formula, lhs=0, rhs=1)
 ll <- formula(formula, lhs=1, rhs=2)
 
+
 response <- as.matrix(eval(ll[[2]], data))
 n <- length(response)
 if(ncol(as.matrix(response)) > 1) stop("The response variable must be univariate!!", call.=FALSE)
 
  x <- model.matrix(nl, data)
+ if(length(x)==0) stop("At least one covariate with measurement error must be specified!!", call.=FALSE) 
+
  M <- as.matrix(x[,-1])
  colnames(M) <- colnames(x)[-1]
  xa <- "bsp("
@@ -68,12 +71,11 @@ if(ncol(as.matrix(response)) > 1) stop("The response variable must be univariate
  if(sum(idw) > 1) stop("More than one nonparametric component is not supported!!",call.=FALSE)
 
  if(sum(idw) == 1){
-temp <- eval(parse(text=reem(wb[idw],"bsp")), data)
-temp <- as.matrix(temp)
-k1 <- floor(n^(1/5))
-idw[1] <- TRUE
-if(length(idw) > 2){
-   X <- as.matrix(w[,!idw])
+	temp <- eval(parse(text=wb[idw]), data)
+	k1 <- attr(temp,"kn")
+	idw[1] <- TRUE
+	if(length(idw) > 2){
+   	X <- as.matrix(w[,!idw])
    colnames(X) <- colnames(w)[!idw]
    p <- sum(!idw)
 }else{p <- 0}
@@ -86,7 +88,7 @@ if(length(idw) > 2){
 
 
 
-par_ini <- list(p=0,k1=0,q=0,family=family,n=n,y=response)
+par_ini <- list(p=0,k1=0,k2=0,q=0,family=family,n=n,y=response)
 par_ini$q <- q
 par_ini$M <- M
 
@@ -102,8 +104,8 @@ if(p==0){
  rres <- mean((response - X_au%*%b_au)^2)
   }
   else{
- B <- bs(temp,knots=quantile(temp,prob=seq(1,k1,by=1)/(k1+1)),intercept=TRUE)
- k1 <- ncol(B)
+   B <- attr(temp,"B")
+   k1 <- ncol(B)
  colnames(B) <- paste("alpha",1:k1)
 
   B_au <- cbind(M,B)
@@ -112,6 +114,7 @@ if(p==0){
  par_ini$p <- p
  par_ini$k1 <- k1
  par_ini$B <- B
+ par_ini$temp.mu <- temp
  par_ini$alpha.i <- b_au[(q+1):(q+k1)]
  par_ini$rho.i <- b_au[1:q]
  rres <- mean((response - B_au%*%b_au)^2)
@@ -133,8 +136,8 @@ if(p==0){
  rres <- mean((response -  X_au%*%b_au)^2)
      }
      else{
-  B <- bs(temp,knots=quantile(temp,prob=seq(1,k1,by=1)/(k1+1)),intercept=TRUE)
-  k1 <- ncol(B)
+	 B <- attr(temp,"B")
+	 k1 <- ncol(B)	 
   colnames(B) <- paste("alpha",1:k1)
   par_ini$p <- p
   par_ini$X <- X
@@ -142,6 +145,7 @@ if(p==0){
   par_ini$B <- B
   X_au <- cbind(X,B,M)
   b_au <- solve(t(X_au)%*%X_au)%*%t(X_au)%*%response
+  par_ini$temp.mu <- temp
   par_ini$beta.i <- b_au[1:p]
   par_ini$alpha.i <- b_au[(p+1):(p+k1)]
   par_ini$rho.i <- b_au[(p+k1+1):(p+k1+q)]

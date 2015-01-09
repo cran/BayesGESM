@@ -1,18 +1,21 @@
 \name{BayesGESM-package}
 \alias{BayesGESM-package}
 \docType{package}
-\title{Bayesian Analysis of Generalized Elliptical Semiparametric Models}
+\title{Bayesian Analysis of Generalized Elliptical Semi-parametric Models and Flexible Measurement Error Models}
 \description{
-This package allows obtain the statistical inference based on the Bayesian approach for regression models under the assumption
-that independent additive errors follow normal, Student-t, slash, contaminated normal, Laplace or symmetric hyperbolic distribution, where both location
-and dispersion parameters of the response variable distribution include non-parametric additive components described by B-splines using the function BayesGESM
-and it also allows to obtain the statistical inference based on Bayesian approach for flexible measurement error models using the function fmem.}
+This package allows to perform the statistical inference based on the Bayesian approach for regression models under the assumption
+that independent additive errors follow normal, Student-t, slash, contaminated normal, Laplace or symmetric hyperbolic distributions, i.e.,
+additive errors follow a scale mixtures of normal distributions.
+The regression models considered in this package are: \emph{(i)} Generalized elliptical semi-parametric models, where both location
+and dispersion parameters of the response variable distribution include nonparametric additive components described by using B-splines; and
+\emph{(ii)} Flexible measurement error models, which admit explanatory variables with and without measurement additive errors as well as
+the presence of a nonparametric component approximated by using B-splines.}
 \details{
 \tabular{ll}{
 Package: \tab BayesGESM\cr
 Type: \tab Package\cr
-Version: \tab 1.1\cr
-Date: \tab 2014-12-09\cr
+Version: \tab 1.2\cr
+Date: \tab 2015-01-09\cr
 License: \tab GPL-2 | GPL-3\cr
 }
 }
@@ -21,20 +24,39 @@ Luz Marina Rondon <lumarp@gmail.com> and Heleno Bolfarine
 
 Maintainer: Luz Marina Rondon
 }
-\references{Rondon, L.M. and Bolfarine, H. (2014) Bayesian Analysis of Generalized Elliptical Semiparametric Models. (submitted).
+\references{Rondon, L.M. and Bolfarine, H. (2015) Bayesian Analysis of Generalized Elliptical Semi-parametric Models. (submitted).
 
-			Rondon, L.M. and Bolfarine, H. (2014). Bayesian analysis of flexible measurement error models.(submitted)
+			Rondon, L.M. and Bolfarine, H. (2015). Bayesian analysis of flexible measurement error models.(submitted)
 }
 
 \examples{
-## Not run
+###### Example for Generalized Elliptical Semi-parametric Models #####
 #library(ssym)
 #data(Erabbits)
-#attach(Erabbits)
+#Erabbits2 <- Erabbits[order(Erabbits$age,Erabbits$wlens),]
+#attach(Erabbits2)
 
-#fit <- BayesGESM(wlens, np.mu=age, family= "Hyperbolic", eta=0.8,
-#				 burn.in=10, post.sam.s=10, thin=1)			 
+#fit <- gesm(wlens ~ bsp(age) | bsp(age), family= "Hyperbolic", eta=0.8,
+#				 burn.in=100, post.sam.s=100, thin=2)			 
 #summary(fit)
-## End(Not run)
+
+###### Example for Flexible Measurement Error Models ################
+#library(SemiPar)
+#library(Formula)
+#### Ragweed Pollen ####
+#data(ragweed)
+#attach(ragweed)
+#ragweed2 <- ragweed[year==1993]
+#day.in.seas  <- day.in.seas[year==1993]
+#temperature <- temperature[year==1993]
+#rain <- rain[year==1993]
+#wind.speed <- wind.speed[year==1993]
+#ragweedn <- data.frame(ragweed2,day.in.seas,temperature,rain,wind.speed)
+#
+#model <- fmem(sqrt(ragweed2) ~ wind.speed | rain + temperature + bsp(day.in.seas),
+#			   data=ragweedn,family="Normal", burn.in=500, post.sam.s=2000,
+#			   thin=10, omeg=1)
+#summary(model)
+#
 }
 
