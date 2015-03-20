@@ -3,7 +3,7 @@
 \title{Flexible Measurement Error Models}
 \description{
 \bold{fmem} is used to obtain the statistical inference based on the Bayesian approach for flexible measurement error models. This model
-admits vectors of explanatory variables with and without measurement error as well as the presence of a nonlinear effect, which is approximated
+admits vectors of explanatory variables with and without measurement error as well as the presence of nonlinear effects, which is approximated
 by using B-splines. The error-prone variables and the random error follow scale mixtures of normal distributions.}
 \usage{
 fmem(formula, data, omeg, family, eta, burn.in, post.sam.s, thin)
@@ -16,7 +16,7 @@ fmem(formula, data, omeg, family, eta, burn.in, post.sam.s, thin)
  			   Supported distributions include \emph{Normal}, \emph{Student-t}, \emph{Slash},\emph{Hyperbolic},
 			   \emph{Laplace} and \emph{ContNormal}, which correspond to normal, Student-t, slash, symmetric hyperbolic, Laplace and
 			   contaminated normal distributions, respectively.}
-  \item{eta}{a numeric value or numeric vector that represents the extra parameter of the specified error distribution.}
+  \item{eta}{(optional) a numeric value or numeric vector that represents the extra parameter of the specified error distribution. This parameter can be assumed known or unknown.}
   \item{burn.in}{the number of burn-in iterations for the MCMC algorithm.}
   \item{post.sam.s}{the required size for the posterior sample of interest parameters.}
   \item{thin}{(optional) the thinning interval used in the simulation to obtain the required size for the posterior sample.}
@@ -24,11 +24,11 @@ fmem(formula, data, omeg, family, eta, burn.in, post.sam.s, thin)
 \details{
 The argument \emph{formula} comprises of three parts, namely: \emph{(i)} observed response variable;
 \emph{(ii)} covariates with measurement error; and \emph{(iii)} covariates without measurement error including the nonparametric
-component, which can be specified by using the function \code{bsp()}.
+components, which can be specified by using the function \code{bsp()}.
 The first two parts are separated by the symbol "~" and the second and third parts are separated by the symbol "|".
 
 This function allows to fit the measurement error model which admits vectors of explanatory
-variables with and without measurement error as well as the presence of a nonlinear effect
+variables with and without measurement error as well as the presence of nonlinear effects
 approximated by using B-splines. The model investigated is the structural
 version, as the error-prone variables follow scale mixtures of normal distributions.
 }
@@ -46,6 +46,7 @@ version, as the error-prone variables follow scale mixtures of normal distributi
 
 \seealso{
 \code{\link{bsp}}
+\code{\link{bsp.graph.fmem}}
 }
 
 
@@ -54,7 +55,7 @@ version, as the error-prone variables follow scale mixtures of normal distributi
 #### Ragweed Pollen ####
 #data(ragweed)
 #attach(ragweed)
-
+############ Example ragweed data
 #ragweed2 <- ragweed[year==1993]
 #day.in.seas  <- day.in.seas[year==1993]
 #temperature <- temperature[year==1993]
@@ -67,8 +68,22 @@ version, as the error-prone variables follow scale mixtures of normal distributi
 #			   thin=10, omeg=1)
 #summary(model)
 #
-##########   Plot nonparametric component
-#bsp.graph(model, which=1, xlab="Day", ylab="f(Day)")
+###   Plot nonparametric component
+#bsp.graph.fmem(model, which=1, xlab="Day", ylab="f(Day)")
+
+
+############ Example Boston data 
+#library(MASS)
+#data(Boston)
+#attach(Boston)
+
+#model <- fmem(log(medv) ~ nox | crim + rm + bsp(lstat) + bsp(dis), data=Boston,
+#              family="ContNormal", burn.in=10000, post.sam.s=5000, omeg=4, thin=10)
+#summary(model)
+#
+###   Plot nonparametric components
+#bsp.graph.fmem(model, which=1, xlab="lstat", ylab="f(lstat)") ### for variable lstat
+#bsp.graph.fmem(model, which=2, xlab="dis", ylab="f(dis)") ### for variable dis
 #
 
 }

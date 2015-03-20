@@ -1,21 +1,21 @@
 \name{BayesGESM-package}
 \alias{BayesGESM-package}
 \docType{package}
-\title{Bayesian Analysis of Generalized Elliptical Semi-parametric Models and Flexible Measurement Error Models}
+\title{Bayesian Analysis of Generalized Elliptical Semi-Parametric Models and Flexible Measurement Error Models}
 \description{
-This package allows to perform the statistical inference based on the Bayesian approach for regression models under the assumption
+It allows to perform the statistical inference based on the Bayesian approach for regression models under the assumption
 that independent additive errors follow normal, Student-t, slash, contaminated normal, Laplace or symmetric hyperbolic distributions, i.e.,
 additive errors follow a scale mixtures of normal distributions.
 The regression models considered in this package are: \emph{(i)} Generalized elliptical semi-parametric models, where both location
-and dispersion parameters of the response variable distribution include nonparametric additive components described by using B-splines; and
+and dispersion parameters of the response variable distribution include non-parametric additive components described by using B-splines; and
 \emph{(ii)} Flexible measurement error models, which admit explanatory variables with and without measurement additive errors as well as
-the presence of a nonparametric component approximated by using B-splines.}
+the presence of non-parametric components approximated by using B-splines.}
 \details{
 \tabular{ll}{
 Package: \tab BayesGESM\cr
 Type: \tab Package\cr
 Version: \tab 1.2\cr
-Date: \tab 2015-01-09\cr
+Date: \tab 2015-03-20\cr
 License: \tab GPL-2 | GPL-3\cr
 }
 }
@@ -41,9 +41,8 @@ Maintainer: Luz Marina Rondon
 #summary(fit)
 
 ###### Example for Flexible Measurement Error Models ################
-#library(SemiPar)
-#library(Formula)
 #### Ragweed Pollen ####
+#library(SemiPar)
 #data(ragweed)
 #attach(ragweed)
 #ragweed2 <- ragweed[year==1993]
@@ -58,5 +57,15 @@ Maintainer: Luz Marina Rondon
 #			   thin=10, omeg=1)
 #summary(model)
 #
+#
+#### Boston Data set #########
+#library(MASS)
+#data(Boston)
+#attach(Boston)
+#model <- fmem(log(medv) ~ nox | crim + rm + bsp(lstat) + bsp(dis), data=Boston,
+#              family="ContNormal", burn.in=10000, post.sam.s=5000, omeg=4, thin=10)
+#summary(model)			   
+#bsp.graph.fmem(model,1) ### for variable lstat
+#bsp.graph.fmem(model,2) ### for variable dis
+#
 }
-

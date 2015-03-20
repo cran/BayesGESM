@@ -1,6 +1,6 @@
 exportPattern("^[[:alpha:]]+")
-#export(gesm, mcmc.gesm, summary.gesm, fmem, mcmc.fmem, summary.fmem, bsp, bsp.graph)
+#export(gesm, mcmc.gesm, summary.gesm, fmem, mcmc.fmem, summary.fmem, bsp, bsp.graph, bsp.graph.fmem)
+S3method(summary, fmem)
+S3method(summary, gesm)
 
 import(splines, truncdist, GIGrvg, normalp, Formula)
-
-

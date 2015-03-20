@@ -3,7 +3,7 @@
 \title{Tool for plotting B-splines}
 \description{
 \bold{bsp.graph} displays the graphs of the nonparametric effects from an object of
-the class \code{gesm()} or \code{fmem()}.
+the class \code{gesm()}.
 }
 \usage{
 bsp.graph(object, which, xlab, ylab, main)
