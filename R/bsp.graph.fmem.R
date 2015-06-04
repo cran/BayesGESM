@@ -12,6 +12,7 @@ reem <- function(aa,b){
         }
 
 ks <- object$ks
+homo <- object$homo
 if(which<1 || which>length(ks) || which!=floor(which)) stop(paste("The which argument must be an integer value between in 1 and ",length(ks)))
 if(sum(ks)==0) stop("A nonparametric function was not specified in the model")
 
@@ -35,7 +36,8 @@ p <- object$p
 q <- object$q
 fs <- matrix(0,n,R)
 for(i in 1:R){
-fs[,i] <- B%*%chains[i,(p+3*q+2+lims[which]):(p+3*q+2+lims[which]+ks[which]-1)]
+if(homo==1) fs[,i] <- B%*%chains[i,(p+3*q+2+lims[which]):(p+3*q+2+lims[which]+ks[which]-1)]
+else fs[,i] <- B%*%chains[i,(p+3*q+1+lims[which]):(p+3*q+lims[which]+ks[which])]
 }
 li <- apply(fs, 1, quant005)
 m <- apply(fs, 1, mean)

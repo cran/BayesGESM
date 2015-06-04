@@ -11,7 +11,7 @@ bsp(x,kn)
   \item{kn}{(optional) the number of internal knots . The default value is \eqn{[n^{1/5}]}, where \emph{n} is the sample size}.
 }
 \value{
-\item{x}{the B-spline basis matrix, which is cubic and has an intercept.}
+\item{x}{the B-spline basis matrix, which is cubic.}
 }
 \details{
 This function uses the routine \code{bs()} of the R package \emph{splines}.

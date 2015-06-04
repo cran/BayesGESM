@@ -1,12 +1,8 @@
 fmem <-
-function(formula, data, omeg, family, eta, burn.in, post.sam.s, thin){
+function(formula, data, omeg, family, eta, burn.in, post.sam.s, thin, heter){
 
 if(family!="Normal" & family!="Student-t" & family!="Slash" & family!="Hyperbolic" & family!="ContNormal" & family!="Laplace")
 stop("Family of Distributions specified by the user is not supported, Check documentation!!",call.=FALSE)
-
-#if(family=="Student-t" | family=="Slash" | family=="Hyperbolic" | family=="ContNormal"){
-#if(missingArg(eta)) stop("for the Family of Distributions specified by the user an extra parameter is required!!", call.=FALSE)
-# }
 
 if(family=="Laplace" | family=="Normal"){
  if(!missingArg(eta)) stop("for the Laplace and Normal distribution must be not specify the extra parameter!!", call.=FALSE)
@@ -20,13 +16,12 @@ if(missingArg(eta)){
 }else{attr(eta,"know") <- 1}
 
 if(missingArg(thin)){thin <- 1}
-if(missingArg(omeg)){omeg <- 1}
-if(omeg<=0){stop("The value of the Ratio of the error variances must be positive", call.=FALSE)}
 
 if(thin<1 | thin != floor(thin))
 stop("the thin value must be a positive integer!!", call.=FALSE)
 if (post.sam.s != floor(post.sam.s) | post.sam.s < 1  ){ stop("Invalid posterior sample size value", call.=FALSE)}
 if (burn.in != floor(burn.in) | burn.in < 1){ stop("Invalid burn-in value", call.=FALSE)}
+
 
  mf <- match.call(expand.dots = FALSE)
  m <- match(c("formula"), names(mf), 0)
@@ -56,6 +51,20 @@ if(ncol(as.matrix(response)) > 1) stop("The response variable must be univariate
  q <- ncol(M)
  idx <- grepl(xa,xb,fixed=TRUE)
  if(sum(idx) >= 1) stop("Nonlinear effects of  covariates with measurement error  are not supported!!",call.=FALSE)
+
+
+ if(missingArg(heter)){
+   homo <- 1
+   if(missingArg(omeg)){omeg <- 1}
+   if(omeg<=0){stop("The value of the Ratio of the error variances must be positive", call.=FALSE)}
+}else{
+homo <- 0
+if(!is.list(heter)) stop("The argument must be a list!!", call.=FALSE)
+
+heter$sigma2y <- as.matrix(heter$sigma2y)
+heter$sigma2xi <- as.matrix(heter$sigma2xi)
+if(nrow(heter$sigma2y) != n || ncol(heter$sigma2y)!= 1 || nrow(heter$sigma2xi) != n || ncol(heter$sigma2xi)!= q) stop("The matrix for heteroscedastic model are ...")
+}
 
 
  w <- model.matrix(ll, data)
@@ -97,7 +106,11 @@ par_ini$M <- M
      nombres <- colnames(X)
      if(sum(ks)==0){
  X_au <- cbind(X,M)
- b_au <- solve(t(X_au)%*%X_au)%*%t(X_au)%*%response
+ if(homo==0){
+ PP <- matrix(1/heter$sigma2y, nrow(X_au), ncol(X_au))
+ b_au <- solve(t(X_au)%*%(X_au*PP))%*%t(X_au*PP)%*%response
+ }
+ else b_au <- solve(t(X_au)%*%X_au)%*%t(X_au)%*%response
  
  par_ini$p <- p
  par_ini$X <- X
@@ -114,7 +127,11 @@ par_ini$M <- M
   par_ini$B <- B
   par_ini$nps <- nps
   X_au <- cbind(X,B,M)
-  b_au <- solve(t(X_au)%*%X_au)%*%t(X_au)%*%response
+  if(homo==0){
+ PP <- matrix(1/heter$sigma2y, nrow(X_au), ncol(X_au))
+ b_au <- solve(t(X_au)%*%(X_au*PP))%*%t(X_au*PP)%*%response
+  } 
+  else b_au <- solve(t(X_au)%*%X_au)%*%t(X_au)%*%response
   par_ini$beta.i <- b_au[1:p]
   par_ini$alpha.i <- b_au[(p+1):(p+sum(ks))]
   par_ini$rho.i <- b_au[(p+sum(ks)+1):(p+sum(ks)+q)]
@@ -135,9 +152,10 @@ par_ini$M <- M
  
     u <- function(s,eta){
     bb <- eta/2 + s/2
- aa <- (eta + q)/2 + 1
-  rgamma(length(s),shape=aa,scale=1)/bb
+ aa <- (eta + 1)/2 + q
+rgamma(length(s),shape=aa,scale=1)/bb
     }
+
  pdf <- function(z,eta){gamma((q+1+eta)/2)*(1+z^2/eta)^(-(q+1+eta)/2)/(gamma(eta/2)*(pi*eta)^((q+1)/2))}
  cdf <- function(z,eta){pt(z,eta)}
 
@@ -163,7 +181,7 @@ par_ini$M <- M
  
      u <- function(s,eta){
      bb <- s/2
-     aa <- q/2 + eta + 1
+     aa <- 1/2 + eta + q
  u <- runif(length(s))*pgamma(bb, shape=aa, scale=1)
  qgamma(u, shape=aa, scale=1)/bb
    }
@@ -190,7 +208,7 @@ par_ini$M <- M
  if(family=="Laplace"){
      u <- function(s,eta){
      bb <- s
- aa <- -q/2
+ aa <- 1/2 -q
      rgig(1,lambda=aa,chi=bb,psi=0.25)
  }
  pdf <- function(z,eta){besselK(sqrt(z^2/4),(-(q+1)/2+1))*(z^2)^(-((q+1)-2)/4)/((pi)^((q+1)/2))*4^(-(q+2)/2)}
@@ -204,7 +222,7 @@ par_ini$M <- M
   
     u <- function(s,eta){
     bb <- s + 1
-aa <- -q/2
+aa <- -q + 1/2
       rgig(1,lambda=aa,chi=bb,psi=eta^2)
     }
 
@@ -228,7 +246,6 @@ temp/(2*integrate(pdf2,0,Inf,eta)$value)
        -log.poster(nu)
    }
        out <- optim(log(nu0), tf, method="L-BFGS-B", lower=log(0.2), upper=log(20))
-#      out <- optim(log(nu0), tf, method="BFGS")
        new <- exp(out$par)
        new
 }
@@ -242,9 +259,9 @@ temp/(2*integrate(pdf2,0,Inf,eta)$value)
  if(eta[2]<0 | eta[2]>1) stop("the extra parameter eta[2] must be within the interval (0,1)!!",call.=FALSE)}
  
  u <- function(s,eta){
- bb <- exp(-s*eta[2]/2)*eta[1]*eta[2]^(q/2 + 1)
+ bb <- exp(-s*eta[2]/2)*eta[1]*eta[2]^(1/2 + q)
  aa <- (1 - eta[1])*exp(-s/2)
- bb <- bb/(aa + bb)
+ bb <- ifelse(aa==0 && bb==0, 1, bb/(aa + bb))
  uu <- runif(length(s))
  uii <- ifelse(uu<=bb,eta[2],1)
  uii
@@ -261,8 +278,12 @@ temp/(2*integrate(pdf2,0,Inf,eta)$value)
    bv2 <- 2
    nv2 <- sum(ifelse(ui==1,0,1))
 
-     new1 <- max(min(rbeta(1, shape1=(nv2+av1), shape2=(length(ui)-nv2+bv1)),0.95),0.05)
-        new2 <- min(max(rtrunc(1, spec="gamma", a=0, b=1, shape=(nv2*(q/2+1)+av2), scale=(1/(sum(s*ifelse(ui==1,0,1)/2) + bv2))),0.05),0.95)
+   aa <- (nv2*(q/2+1)+av2)
+   bb <- (sum(s*ifelse(ui==1,0,1)/2) + bv2)
+   u <- runif(1)*pgamma(1, shape=aa, scale=1/bb)
+
+   new1 <- max(min(rbeta(1, shape1=(nv2+av1), shape2=(length(ui)-nv2+bv1)),0.99),0.01)
+   new2 <- min(max(qgamma(u, shape=aa, scale=1/bb),0.01),0.99)
    c(new1,new2)
 }
 nu0 <- c(0.5,0.5)
@@ -289,8 +310,10 @@ nu0 <- c(0.5,0.5)
    par_ini$pdf <- pdf
    par_ini$cdf <- cdf
    par_ini$sigma2_y <- rres
-   par_ini$omeg <- omeg
-    
+   par_ini$homo <- homo
+   if(homo == 0) par_ini$heter <- heter
+   else  par_ini$omeg <- omeg
+
    result <- mcmc.fmem(par_ini)
    par_ini$chains=result$chains
    par_ini$DIC=result$DIC

@@ -1,9 +1,9 @@
 \name{mcmc.gesm}
 \alias{mcmc.gesm}
-\title{MCMC algorithm for Generalized Elliptical Semiparametric Models}
+\title{MCMC algorithm for Generalized Elliptical Semi-parametric Models}
 \description{
 This function implements the MCMC algorithm derived in order to draw samples of
-the posterior distribution of the interest parameters in generalized elliptical semiparametric models,
+the posterior distribution of the interest parameters in generalized elliptical semi-parametric models,
 which combines Gibbs sampler and Metropolis-Hastings algorithm.
 }
 \usage{

@@ -3,7 +3,8 @@
 \title{MCMC algorithm for Flexible Measurement Error Models}
 \description{
 This function implements the MCMC algorithm derived in order to draw samples of
-the posterior distribution of the interest parameters in flexible measurement error models.
+the posterior distribution of the interest parameters in flexible measurement error models
+under the presence of homocedastic and heterocedastic random errors.
 }
 \usage{
 mcmc.fmem(params)

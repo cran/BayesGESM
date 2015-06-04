@@ -5,6 +5,7 @@ p <- object$p
 q <- object$q
 ks <- object$ks
 nu0 <- object$nu0
+homo <- object$homo
 
 
 quant005 <- function(x){quantile(x,prob=0.025)}
@@ -68,23 +69,39 @@ b <- (object$ks - 3)
 rownames(b) <- nvar
 colnames(b) <- "             "
 printCoefmat(b)
-}
+
 cat("\n Graphs of the nonparametric effects are provided by \n")
 cat(" using the function 'bsp.graph.fmem'    \n")
+}
 
 if(object$family!="Normal" && object$family!="Laplace"  && attr(object$eta,"know")==0){
 cat("\n =======   Eta parameter    \n")
-a <- round(apply(as.matrix(chains[,(p+3*q+sum(ks)+1+length(ks)+1):(p+3*q+sum(ks)+1+length(ks)+length(nu0))]), 2, mean), digits=4)
+if(homo==1){
+if(sum(ks)==0) length(ks) <- 0
+a <-  round(apply(as.matrix(chains[,(p+3*q+sum(ks)+1+length(ks)+1):(p+3*q+sum(ks)+1+length(ks)+length(nu0))]), 2, mean), digits=4)
 a2 <- round(apply(as.matrix(chains[,(p+3*q+sum(ks)+1+length(ks)+1):(p+3*q+sum(ks)+1+length(ks)+length(nu0))]), 2, median), digits=4)
-b <- round(apply(as.matrix(chains[,(p+3*q+sum(ks)+1+length(ks)+1):(p+3*q+sum(ks)+1+length(ks)+length(nu0))]), 2, sd), digits=4)
-c <- round(apply(as.matrix(chains[,(p+3*q+sum(ks)+1+length(ks)+1):(p+3*q+sum(ks)+1+length(ks)+length(nu0))]), 2, quant005), digits=4)
-d <- round(apply(as.matrix(chains[,(p+3*q+sum(ks)+1+length(ks)+1):(p+3*q+sum(ks)+1+length(ks)+length(nu0))]), 2, quant095), digits=4)
+b <-  round(apply(as.matrix(chains[,(p+3*q+sum(ks)+1+length(ks)+1):(p+3*q+sum(ks)+1+length(ks)+length(nu0))]), 2, sd), digits=4)
+c <-  round(apply(as.matrix(chains[,(p+3*q+sum(ks)+1+length(ks)+1):(p+3*q+sum(ks)+1+length(ks)+length(nu0))]), 2, quant005), digits=4)
+d <-  round(apply(as.matrix(chains[,(p+3*q+sum(ks)+1+length(ks)+1):(p+3*q+sum(ks)+1+length(ks)+length(nu0))]), 2, quant095), digits=4)
+e <- cbind(a,a2,b,c,d)
+colnames(e) <- c("Mean ","Median","SD  ","      C.I.","95%    ")
+rownames(e) <- colnames(object$nu0)
+printCoefmat(e)
+}else{
+if(sum(ks)==0) length(ks) <- 0
+a <-  round(apply(as.matrix(chains[,(p+3*q+sum(ks)+length(ks)+1):(p+3*q+sum(ks)+length(ks)+length(nu0))]), 2, mean), digits=4)
+a2 <- round(apply(as.matrix(chains[,(p+3*q+sum(ks)+length(ks)+1):(p+3*q+sum(ks)+length(ks)+length(nu0))]), 2, median), digits=4)
+b <-  round(apply(as.matrix(chains[,(p+3*q+sum(ks)+length(ks)+1):(p+3*q+sum(ks)+length(ks)+length(nu0))]), 2, sd), digits=4)
+c <-  round(apply(as.matrix(chains[,(p+3*q+sum(ks)+length(ks)+1):(p+3*q+sum(ks)+length(ks)+length(nu0))]), 2, quant005), digits=4)
+d <-  round(apply(as.matrix(chains[,(p+3*q+sum(ks)+length(ks)+1):(p+3*q+sum(ks)+length(ks)+length(nu0))]), 2, quant095), digits=4)
 e <- cbind(a,a2,b,c,d)
 colnames(e) <- c("Mean ","Median","SD  ","      C.I.","95%    ")
 rownames(e) <- colnames(object$nu0)
 printCoefmat(e)
 }
+}
 
+if(homo ==1){
 cat("\n =======   Dispersion parameter    \n")
 a <- round(apply(as.matrix(chains[,(p+3*q+1)]), 2, mean), digits=4)
 a2 <- round(apply(as.matrix(chains[,(p+3*q+1)]), 2, median), digits=4)
@@ -96,6 +113,7 @@ colnames(e) <- c("Mean ","Median","SD  ","      C.I.","95%    ")
 rownames(e) <- "Sigma2_y  "
 printCoefmat(e)
 cat("\n  Ratio of the error variances: " , (object$omeg))
+}
 
 
 cat("\n\n ==========   Model Selection Criteria   ==========")

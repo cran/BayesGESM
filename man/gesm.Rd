@@ -16,15 +16,15 @@ gesm(formula, data, family, eta, burn.in, post.sam.s, thin)
   \item{family}{a description of the error distribution to be used in the model. Supported distributions include \emph{Normal}, \emph{Student-t}, \emph{Slash},
                \emph{Hyperbolic}, \emph{Laplace} and \emph{ContNormal}, which correspond to normal, Student-t, slash, symmetric hyperbolic, Laplace and
 			   contaminated normal distributions, respectively.}
-  \item{eta}{a numeric value or numeric vector that represents the extra parameter of the specified error distribution.}
+  \item{eta}{(optional) a numeric value or numeric vector that represents the extra parameter of the specified error distribution. This parameter can be assumed known or unknown.}
   \item{burn.in}{the number of burn-in iterations for the MCMC algorithm.}
   \item{post.sam.s}{the required size for the posterior sample of interest parameters.}
   \item{thin}{(optional) the thinning interval used in the simulation to obtain the required size for the posterior sample.}
 }
 \details{
 The argument \emph{formula} comprises three parts, namely: \emph{(i)} observed response variable; \emph{(ii)} covariates for the
-location parameter including the nonparametric component; and \emph{(iii)} covariates for the dispersion parameter including the
-nonparametric component.
+location parameter including the nonparametric components; and \emph{(iii)} covariates for the dispersion parameter including the
+nonparametric components.
 The first two parts are separated by the symbol "~" and the second and third parts are separated by the symbol "|".
 Furthemore, the nonparametric components can be specified by using the function \code{bsp()} in the second and third parts of the argument
 \emph{formula}.
@@ -41,8 +41,6 @@ those obtained under the classical approach.
 \item{K-L}{a vector of case-deletion influence measures based on the Kullback-Leibler divergence.}
 \item{X_2}{a vector of case-deletion influence measures based on the X2-Distance divergence.}
 \item{DIC}{DIC criterion for model selection.}
-\item{EAIC}{EAIC criterion for model selection.}
-\item{EBIC}{EBIC criterion for model selection.}
 \item{LMPL}{Log-marginal pseudo-likelihood for model selection.}
 }
 
@@ -63,14 +61,14 @@ those obtained under the classical approach.
 #Erabbits2 <- Erabbits[order(Erabbits$age,Erabbits$wlens),]
 #attach(Erabbits2)
 
-#fit <- gesm(wlens ~ bsp(age) | bsp(age), family= "Hyperbolic", eta=0.8,
-#				 burn.in=100, post.sam.s=100, thin=2)			 
+#fit <- gesm(wlens ~ bsp(age) | bsp(age), family= "ContNormal", eta=c(0.8,0.9),
+#				 burn.in=1000, post.sam.s=5000, thin=10)			 
 #summary(fit)
 
 ##########   Plot nonparametric components for the location and dispersion parameters 
 #par(mfrow=c(1,2))
-#bsp.graph(fit,which=1, xlab="Rabbit age", ylab="f(age)", main="Location")
-#bsp.graph(fit,which=2, xlab="Rabbit age", ylab="g(age)", main="Dispersion")
+#bsp.graph.gesm(fit, which=1, age, xlab="Rabbit age", ylab="f(age)", main="Location")
+#bsp.graph.gesm(fit, which=2, age, xlab="Rabbit age", ylab="g(age)", main="Dispersion")
 									
 ##########   Residual plot
 #par(mfrow=c(1,2))
